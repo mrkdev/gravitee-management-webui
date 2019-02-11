@@ -132,6 +132,12 @@ const GroupsComponent: ng.IComponentOptions = {
       if (group.manageable) {
         GroupService.update(group.id, {
           name: group.name,
+          roles: group.roles,
+          max_invitation: group.max_invitation,
+          lock_api_role: group.lock_api_role,
+          lock_application_role: group.lock_application_role,
+          system_invitation: group.system_invitation,
+          email_invitation: group.email_invitation,
           defaultApi: this.apiByDefault[group.id],
           defaultApplication: this.applicationByDefault[group.id]
         }).then(() => {

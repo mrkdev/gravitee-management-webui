@@ -52,7 +52,12 @@ class GroupService {
   static _mapToEntity(grp) {
     let grpEntity = {
       name: grp.name,
-      roles: grp.roles
+      roles: grp.roles,
+      max_invitation: grp.max_invitation,
+      lock_api_role: grp.lock_api_role,
+      lock_application_role: grp.lock_application_role,
+      system_invitation: grp.system_invitation,
+      email_invitation: grp.email_invitation
     };
     let eventRules = [];
     if (grp.defaultApi) {
@@ -109,6 +114,33 @@ class GroupService {
     return this.$http.get(`${this.groupsURL}/${group}/memberships?type=${type}`)
   }
 
+  getInvitationsURL(groupId: string): string {
+    return this.groupsURL + '/' + groupId + '/invitations/';
+  };
+
+  getInvitations(groupId: string): ng.IPromise<any> {
+    return this.$http.get(this.getInvitationsURL(groupId));
+  }
+
+  inviteMember(group: any, email: string): ng.IPromise<any> {
+    return this.$http.post(this.getInvitationsURL(group.id), {
+      reference_type: 'GROUP',
+      reference_id: group.id,
+      email: email,
+      api_role: group.api_role,
+      application_role: group.application_role
+    });
+  }
+
+  deleteInvitation(groupId: string, invitation: string): ng.IPromise<any> {
+    return this.$http.delete(this.getInvitationsURL(groupId) + invitation);
+  }
+
+  updateInvitation(groupId: string, invitation: any): ng.IPromise<any> {
+    delete invitation.created_at;
+    delete invitation.updated_at;
+    return this.$http.put(this.getInvitationsURL(groupId) + invitation.id, invitation);
+  }
 }
 
 export default GroupService;
